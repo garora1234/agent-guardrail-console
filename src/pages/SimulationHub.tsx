@@ -72,6 +72,10 @@ const mockResult: SimulationResult = {
   roleExplanation:
     "CSR cannot approve this action. Request is escalated to Supervisor.",
   approvalFlow: ["CSR", "Supervisor"],
+  decisionExplanation:
+    "The fee waiver request was not automatically approved because the requested amount of $75 exceeds the allowed threshold of $50. However, since the customer meets tenure requirements (2 years > 12 months) and has no recent waivers, the request can proceed with supervisor approval.",
+  systemInsight:
+    "This scenario requires approval due to policy thresholds. Frequent escalations for this action may indicate overly strict policy settings — consider reviewing the threshold in Action Policies.",
 };
 
 const actions = [
