@@ -20,6 +20,8 @@ import {
   AlertTriangle,
   ArrowRight,
   RotateCcw,
+  Shield,
+  Users,
 } from "lucide-react";
 
 interface RuleResult {
