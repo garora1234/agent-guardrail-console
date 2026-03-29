@@ -82,7 +82,7 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
             {importedConditions.length > 0 && (
               <div className="rounded-md border border-border bg-secondary/20 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <Import className="h-3 w-3 text-primary" />
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {ruleStatus === "pending"
@@ -91,6 +91,9 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
                         ? "Imported Rules — Approved"
                         : "Imported Rules — Rejected"}
                     </span>
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5">
+                      Imported
+                    </Badge>
                   </div>
                   {ruleStatus === "approved" && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-success/30 text-success bg-success/10">
