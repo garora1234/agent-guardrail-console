@@ -1,17 +1,17 @@
 import { Database, Settings, Shield, Activity, FlaskConical, Users, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
-  { icon: Settings, label: "Bank Configuration", path: "/", active: true },
-  { icon: Shield, label: "Action Policies", path: "/policies", active: false },
-  { icon: Users, label: "Role Configuration", path: "/roles", active: false },
-  { icon: Database, label: "Agents", path: "/agents", active: false },
-  { icon: FlaskConical, label: "Simulation", path: "/simulation", active: false },
-  { icon: FileText, label: "Audit Log", path: "/audit", active: false },
-  { icon: Activity, label: "Monitoring", path: "/monitoring", active: false },
+  { icon: Settings, label: "Bank Configuration", path: "/" },
+  { icon: Shield, label: "Action Policies", path: "/policies" },
+  { icon: Users, label: "Role Configuration", path: "/roles" },
+  { icon: Database, label: "Agents", path: "/agents" },
+  { icon: FlaskConical, label: "Simulation", path: "/simulation" },
+  { icon: FileText, label: "Audit Log", path: "/audit" },
+  { icon: Activity, label: "Monitoring", path: "/monitoring" },
 ];
-
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
