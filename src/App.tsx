@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import BankConfigStudio from "./pages/BankConfigStudio";
 import ActionPolicyBuilder from "./pages/ActionPolicyBuilder";
 import RoleConfiguration from "./pages/RoleConfiguration";
-import SimulationHub from "./pages/SimulationHub";
+
 import NotFound from "./pages/NotFound.tsx";
 const queryClient = new QueryClient();
 
@@ -20,7 +20,7 @@ const App = () => (
           <Route path="/" element={<BankConfigStudio />} />
           <Route path="/policies" element={<ActionPolicyBuilder />} />
           <Route path="/roles" element={<RoleConfiguration />} />
-          <Route path="/simulation" element={<SimulationHub />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
