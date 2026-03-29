@@ -2,11 +2,14 @@ export type RiskLevel = "low" | "medium" | "high";
 export type AutonomyLevel = "suggest-only" | "execute-with-approval" | "auto-execute";
 export type PolicySource = "imported" | "manual";
 export type ConditionLogic = "AND" | "OR";
+export type ConditionOrigin = "imported" | "custom";
 
 export interface PolicyCondition {
   id: string;
   text: string;
   logic?: ConditionLogic;
+  origin: ConditionOrigin;
+  enabled?: boolean;
 }
 
 export interface ApprovalStep {
@@ -18,6 +21,13 @@ export interface ApprovalStep {
 export interface Guardrail {
   id: string;
   text: string;
+}
+
+export interface PolicyContext {
+  sourceDocument: string;
+  approvalStatus: "approved" | "pending";
+  extractedDate: string;
+  extractedRulesCount: number;
 }
 
 export interface ActionPolicy {
@@ -34,6 +44,7 @@ export interface ActionPolicy {
   guardrails: Guardrail[];
   source: PolicySource;
   sourceDocument?: string;
+  policyContext?: PolicyContext;
 }
 
 export const mockActions: ActionPolicy[] = [
@@ -44,9 +55,9 @@ export const mockActions: ActionPolicy[] = [
     status: "configured",
     activePolicies: 3,
     conditions: [
-      { id: "c1", text: "Amount < $50" },
-      { id: "c2", text: "Customer tenure > 12 months", logic: "AND" },
-      { id: "c3", text: "No waiver in last 90 days", logic: "AND" },
+      { id: "c1", text: "Amount < $50", origin: "imported", enabled: true },
+      { id: "c2", text: "Customer tenure > 12 months", logic: "AND", origin: "imported", enabled: true },
+      { id: "c3", text: "No waiver in last 90 days", logic: "AND", origin: "imported", enabled: true },
     ],
     conditionLogic: "AND",
     riskLevel: "low",
@@ -61,6 +72,12 @@ export const mockActions: ActionPolicy[] = [
     ],
     source: "imported",
     sourceDocument: "fee-waiver-policy-2026.pdf",
+    policyContext: {
+      sourceDocument: "Fee_Waiver_Policy_2026.pdf",
+      approvalStatus: "approved",
+      extractedDate: "2026-03-15",
+      extractedRulesCount: 3,
+    },
   },
   {
     id: "change-address",
@@ -69,8 +86,9 @@ export const mockActions: ActionPolicy[] = [
     status: "configured",
     activePolicies: 2,
     conditions: [
-      { id: "c4", text: "Identity verification completed" },
-      { id: "c5", text: "No fraud flag on account", logic: "AND" },
+      { id: "c4", text: "Identity verification completed", origin: "imported", enabled: true },
+      { id: "c5", text: "No fraud flag on account", logic: "AND", origin: "imported", enabled: true },
+      { id: "c6", text: "Address change limit ≤ 3 per year", logic: "AND", origin: "custom", enabled: true },
     ],
     conditionLogic: "AND",
     riskLevel: "medium",
@@ -83,7 +101,14 @@ export const mockActions: ActionPolicy[] = [
       { id: "g3", text: "Require human confirmation for flagged accounts" },
       { id: "g4", text: "Log all address changes for audit trail" },
     ],
-    source: "manual",
+    source: "imported",
+    sourceDocument: "address-change-procedures.pdf",
+    policyContext: {
+      sourceDocument: "Address_Change_Procedures.pdf",
+      approvalStatus: "approved",
+      extractedDate: "2026-03-12",
+      extractedRulesCount: 2,
+    },
   },
   {
     id: "close-account",
@@ -92,9 +117,10 @@ export const mockActions: ActionPolicy[] = [
     status: "configured",
     activePolicies: 4,
     conditions: [
-      { id: "c6", text: "Account balance = $0" },
-      { id: "c7", text: "No pending transactions", logic: "AND" },
-      { id: "c8", text: "Customer-initiated request", logic: "AND" },
+      { id: "c7", text: "Account balance = $0", origin: "imported", enabled: true },
+      { id: "c8", text: "No pending transactions", logic: "AND", origin: "imported", enabled: true },
+      { id: "c9", text: "Customer-initiated request", logic: "AND", origin: "imported", enabled: true },
+      { id: "c10", text: "Retention offer presented", logic: "AND", origin: "custom", enabled: false },
     ],
     conditionLogic: "AND",
     riskLevel: "high",
@@ -111,6 +137,12 @@ export const mockActions: ActionPolicy[] = [
     ],
     source: "imported",
     sourceDocument: "account-closure-guidelines.pdf",
+    policyContext: {
+      sourceDocument: "Account_Closure_Guidelines.pdf",
+      approvalStatus: "approved",
+      extractedDate: "2026-03-10",
+      extractedRulesCount: 3,
+    },
   },
   {
     id: "credit-limit-adjustment",

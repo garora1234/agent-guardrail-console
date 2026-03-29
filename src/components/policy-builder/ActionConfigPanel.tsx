@@ -2,14 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import {
   ListChecks, ShieldAlert, Zap, GitBranch, ShieldCheck, FileText,
   Save, Rocket, FlaskConical, Plus, Trash2, ArrowRight, ExternalLink,
-  AlertTriangle, Info,
+  AlertTriangle, Info, Import, PenLine,
 } from "lucide-react";
 import type { ActionPolicy, RiskLevel, AutonomyLevel } from "@/data/action-policies";
+import PolicyContextSection from "./PolicyContextSection";
 
 interface ActionConfigPanelProps {
   action: ActionPolicy;
@@ -28,6 +30,9 @@ const autonomyLabels: Record<AutonomyLevel, { label: string; description: string
 };
 
 const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
+  const importedConditions = action.conditions.filter((c) => c.origin === "imported");
+  const customConditions = action.conditions.filter((c) => c.origin === "custom");
+
   return (
     <div className="space-y-5 pb-8">
       {/* Header */}
@@ -41,6 +46,9 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
         <p className="text-sm text-muted-foreground">{action.description}</p>
       </div>
 
+      {/* Policy Context */}
+      <PolicyContextSection action={action} />
+
       {/* Section 1: Policy Rules */}
       <Card>
         <CardHeader className="pb-3">
@@ -50,11 +58,11 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
               <CardTitle className="text-base">Policy Rules (Conditions)</CardTitle>
             </div>
             <Button variant="outline" size="sm" className="gap-1 text-xs h-7">
-              <Plus className="h-3 w-3" /> Add Condition
+              <Plus className="h-3 w-3" /> Add Custom Rule
             </Button>
           </div>
           <CardDescription className="text-xs">
-            Define the conditions that must be met for this action to be eligible.
+            These rules were derived from approved bank policies and can be refined for execution.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,28 +70,100 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
             <div className="flex flex-col items-center py-6 text-center">
               <ListChecks className="h-6 w-6 text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">No conditions defined yet.</p>
-              <p className="text-xs text-muted-foreground">Add conditions to define when this action is eligible.</p>
+              <p className="text-xs text-muted-foreground">Import policies from Configuration Studio or add custom rules.</p>
             </div>
           ) : (
-            <div className="space-y-2">
-              {action.conditions.map((condition, idx) => (
-                <div key={condition.id}>
-                  {idx > 0 && condition.logic && (
-                    <div className="flex items-center gap-2 py-1">
-                      <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 h-5">
-                        {condition.logic}
-                      </Badge>
-                      <Separator className="flex-1" />
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between rounded-md border border-border bg-accent/30 px-3 py-2">
-                    <code className="text-sm font-mono text-foreground">{condition.text}</code>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive">
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+            <div className="space-y-4">
+              {/* Imported Rules */}
+              {importedConditions.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Import className="h-3 w-3 text-primary" />
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Imported Rules
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {importedConditions.map((condition, idx) => (
+                      <div key={condition.id}>
+                        {idx > 0 && condition.logic && (
+                          <div className="flex items-center gap-2 py-1">
+                            <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 h-5">
+                              {condition.logic}
+                            </Badge>
+                            <Separator className="flex-1" />
+                          </div>
+                        )}
+                        <div className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
+                          condition.enabled === false
+                            ? "border-border bg-muted/30 opacity-60"
+                            : "border-border bg-accent/30"
+                        }`}>
+                          <Checkbox
+                            checked={condition.enabled !== false}
+                            className="shrink-0"
+                          />
+                          <code className={`text-sm font-mono flex-1 ${
+                            condition.enabled === false ? "line-through text-muted-foreground" : "text-foreground"
+                          }`}>
+                            {condition.text}
+                          </code>
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
+                            Imported
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Custom Rules */}
+              {customConditions.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <PenLine className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Custom Rules
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {customConditions.map((condition) => (
+                      <div key={condition.id}>
+                        {condition.logic && (
+                          <div className="flex items-center gap-2 py-1">
+                            <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 h-5">
+                              {condition.logic}
+                            </Badge>
+                            <Separator className="flex-1" />
+                          </div>
+                        )}
+                        <div className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
+                          condition.enabled === false
+                            ? "border-dashed border-border bg-muted/30 opacity-60"
+                            : "border-dashed border-muted-foreground/30 bg-background"
+                        }`}>
+                          <Checkbox
+                            checked={condition.enabled !== false}
+                            className="shrink-0"
+                          />
+                          <code className={`text-sm font-mono flex-1 ${
+                            condition.enabled === false ? "line-through text-muted-foreground" : "text-foreground"
+                          }`}>
+                            {condition.text}
+                          </code>
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-muted-foreground/20 text-muted-foreground shrink-0">
+                            Custom
+                          </Badge>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive shrink-0">
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
