@@ -35,7 +35,6 @@ const SimulationResultPanel = ({ result }: SimulationResultPanelProps) => {
 
   return (
     <div className="space-y-4">
-      {/* Outcome Banner */}
       <Card className={cn("border", config.color)}>
         <CardContent className="flex items-center gap-4 py-5">
           <OutcomeIcon className="h-8 w-8 shrink-0" />
@@ -50,7 +49,6 @@ const SimulationResultPanel = ({ result }: SimulationResultPanelProps) => {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Rules Triggered */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
@@ -88,7 +86,6 @@ const SimulationResultPanel = ({ result }: SimulationResultPanelProps) => {
           </CardContent>
         </Card>
 
-        {/* Role Impact & Approval Flow */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">Role Impact &amp; Approval Flow</CardTitle>

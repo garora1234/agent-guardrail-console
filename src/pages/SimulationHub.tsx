@@ -28,7 +28,6 @@ const SimulationHub = () => {
   return (
     <AppLayout>
       <div className="px-8 py-6 max-w-5xl mx-auto space-y-6">
-        {/* Header */}
         <div>
           <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
             <FlaskConical className="h-5 w-5 text-primary" />
@@ -39,10 +38,8 @@ const SimulationHub = () => {
           </p>
         </div>
 
-        {/* Scenario Input */}
         <ScenarioInput onRun={handleRun} isRunning={isRunning} />
 
-        {/* Loading */}
         {isRunning && (
           <div className="flex items-center justify-center py-12 text-muted-foreground text-sm gap-2">
             <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -50,7 +47,6 @@ const SimulationHub = () => {
           </div>
         )}
 
-        {/* Empty State */}
         {!result && !isRunning && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <FlaskConical className="h-10 w-10 text-muted-foreground mb-3" />
@@ -61,14 +57,12 @@ const SimulationHub = () => {
           </div>
         )}
 
-        {/* Results */}
         {result && !isRunning && (
           <>
             <SimulationResultPanel result={result} />
             <ExplainabilityPanel result={result} />
             <SuggestionsPanel result={result} />
 
-            {/* Action Buttons */}
             <div className="flex items-center gap-3 pt-2">
               <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/policies")}>
                 <Shield className="h-4 w-4" /> Edit Policy
