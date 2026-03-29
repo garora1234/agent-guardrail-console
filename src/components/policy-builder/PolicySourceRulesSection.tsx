@@ -15,23 +15,11 @@ interface PolicySourceRulesSectionProps {
 }
 
 const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => {
-  const [reviewedIds, setReviewedIds] = useState<Record<string, "approved" | "rejected">>({});
+  const [ruleStatus, setRuleStatus] = useState<"pending" | "approved" | "rejected">("pending");
 
   const importedConditions = action.conditions.filter((c) => c.origin === "imported");
   const customConditions = action.conditions.filter((c) => c.origin === "custom");
   const isImported = action.source === "imported";
-
-  const handleApprove = (id: string) => {
-    setReviewedIds((prev) => ({ ...prev, [id]: "approved" }));
-  };
-
-  const handleReject = (id: string) => {
-    setReviewedIds((prev) => ({ ...prev, [id]: "rejected" }));
-  };
-
-  const pendingImported = importedConditions.filter((c) => !reviewedIds[c.id]);
-  const approvedImported = importedConditions.filter((c) => reviewedIds[c.id] === "approved");
-  const approvedCount = approvedImported.length;
 
   return (
     <Card className="border-primary/20 bg-primary/[0.02]">
