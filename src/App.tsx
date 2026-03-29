@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import BankConfigStudio from "./pages/BankConfigStudio";
 import ActionPolicyBuilder from "./pages/ActionPolicyBuilder";
+import RoleConfiguration from "./pages/RoleConfiguration";
 import NotFound from "./pages/NotFound.tsx";
 const queryClient = new QueryClient();
 
@@ -17,7 +18,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<BankConfigStudio />} />
           <Route path="/policies" element={<ActionPolicyBuilder />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/roles" element={<RoleConfiguration />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
