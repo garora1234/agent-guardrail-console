@@ -16,6 +16,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<BankConfigStudio />} />
+          <Route path="/policies" element={<ActionPolicyBuilder />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
