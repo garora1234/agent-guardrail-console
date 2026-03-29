@@ -41,6 +41,14 @@ interface SimulationResult {
   rolePermissions: string[];
   roleExplanation: string;
   approvalFlow: string[];
+  decisionExplanation: string;
+  systemInsight: string;
+}
+  rules: RuleResult[];
+  role: string;
+  rolePermissions: string[];
+  roleExplanation: string;
+  approvalFlow: string[];
 }
 
 const mockResult: SimulationResult = {
