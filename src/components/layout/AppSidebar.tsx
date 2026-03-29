@@ -14,7 +14,8 @@ const navItems = [
 ];
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-
+  const location = useLocation();
+  const navigate = useNavigate();
   return (
     <aside
       className={cn(
