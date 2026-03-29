@@ -36,12 +36,15 @@ const AppSidebar = () => {
       </div>
 
       <nav className="flex-1 space-y-1 px-2 py-4">
-        {navItems.map((item) => (
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
           <button
             key={item.label}
+            onClick={() => navigate(item.path)}
             className={cn(
               "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-              item.active
+              isActive
                 ? "bg-accent text-foreground"
                 : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             )}
