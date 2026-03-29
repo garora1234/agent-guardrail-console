@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import {
-  FileText, ExternalLink, CheckCircle2, ArrowRight, Info,
-  Plus, Trash2, Import, PenLine,
+  FileText, ExternalLink, CheckCircle2, Info,
+  Trash2, Import, PenLine, Pencil, X,
 } from "lucide-react";
 import type { ActionPolicy } from "@/data/action-policies";
 
@@ -14,9 +15,23 @@ interface PolicySourceRulesSectionProps {
 }
 
 const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => {
+  const [reviewedIds, setReviewedIds] = useState<Record<string, "approved" | "rejected">>({});
+
   const importedConditions = action.conditions.filter((c) => c.origin === "imported");
   const customConditions = action.conditions.filter((c) => c.origin === "custom");
   const isImported = action.source === "imported";
+
+  const handleApprove = (id: string) => {
+    setReviewedIds((prev) => ({ ...prev, [id]: "approved" }));
+  };
+
+  const handleReject = (id: string) => {
+    setReviewedIds((prev) => ({ ...prev, [id]: "rejected" }));
+  };
+
+  const pendingImported = importedConditions.filter((c) => !reviewedIds[c.id]);
+  const approvedImported = importedConditions.filter((c) => reviewedIds[c.id] === "approved");
+  const approvedCount = approvedImported.length;
 
   return (
     <Card className="border-primary/20 bg-primary/[0.02]">
@@ -38,17 +53,12 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            {isImported && action.sourceDocument && (
-              <button className="flex items-center gap-1 text-xs text-primary hover:underline font-medium">
-                <ExternalLink className="h-3 w-3" />
-                View Source Document
-              </button>
-            )}
-            <Button variant="outline" size="sm" className="gap-1 text-xs h-7">
-              <Plus className="h-3 w-3" /> Add Rule
-            </Button>
-          </div>
+          {isImported && action.sourceDocument && (
+            <button className="flex items-center gap-1 text-xs text-primary hover:underline font-medium">
+              <ExternalLink className="h-3 w-3" />
+              View Source Document
+            </button>
+          )}
         </div>
 
         {/* Source info */}
@@ -61,7 +71,7 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
           </p>
           {isImported && action.policyContext && (
             <p>
-              <span className="font-medium text-foreground">Approved:</span>{" "}
+              <span className="font-medium text-foreground">Extracted:</span>{" "}
               {new Date(action.policyContext.extractedDate).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -80,17 +90,72 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
           </div>
         ) : (
           <div className="space-y-4 mb-4">
-            {/* Imported Rules */}
-            {importedConditions.length > 0 && (
+            {/* Pending Imported Rules — need review */}
+            {pendingImported.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Import className="h-3 w-3 text-primary" />
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Imported Rules — Pending Review
+                    </span>
+                  </div>
+                  {approvedCount > 0 && (
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-success/30 text-success bg-success/10">
+                      {approvedCount} approved
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Review each extracted rule. Approve to operationalize, edit to refine, or reject to discard.
+                </p>
+                <div className="space-y-2">
+                  {pendingImported.map((condition, idx) => (
+                    <div key={condition.id} className="rounded-md border border-border bg-secondary/20 p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <code className="text-sm font-mono flex-1 text-foreground">
+                          {condition.text}
+                        </code>
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
+                          Imported
+                        </Badge>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="gap-1.5 h-7 text-xs" onClick={() => handleApprove(condition.id)}>
+                          <CheckCircle2 className="h-3 w-3" />
+                          Approve
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1.5 h-7 text-xs">
+                          <Pencil className="h-3 w-3" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-1.5 h-7 text-xs text-muted-foreground hover:text-destructive"
+                          onClick={() => handleReject(condition.id)}
+                        >
+                          <X className="h-3 w-3" />
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Approved Imported Rules */}
+            {approvedImported.length > 0 && (
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
-                  <Import className="h-3 w-3 text-primary" />
+                  <CheckCircle2 className="h-3 w-3 text-success" />
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Imported Rules
+                    Approved Rules
                   </span>
                 </div>
                 <div className="space-y-2">
-                  {importedConditions.map((condition, idx) => (
+                  {approvedImported.map((condition, idx) => (
                     <div key={condition.id}>
                       {idx > 0 && condition.logic && (
                         <div className="flex items-center gap-2 py-1">
@@ -100,24 +165,26 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
                           <Separator className="flex-1" />
                         </div>
                       )}
-                      <div className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
-                        condition.enabled === false
-                          ? "border-border bg-muted/30 opacity-60"
-                          : "border-border bg-accent/30"
-                      }`}>
-                        <Checkbox checked={condition.enabled !== false} className="shrink-0" />
-                        <code className={`text-sm font-mono flex-1 ${
-                          condition.enabled === false ? "line-through text-muted-foreground" : "text-foreground"
-                        }`}>
+                      <div className="flex items-center gap-3 rounded-md border border-success/20 bg-success/5 px-3 py-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
+                        <code className="text-sm font-mono flex-1 text-foreground">
                           {condition.text}
                         </code>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
-                          Imported
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-success/30 text-success bg-success/5 shrink-0">
+                          Approved
                         </Badge>
                       </div>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* All reviewed message */}
+            {pendingImported.length === 0 && importedConditions.length > 0 && (
+              <div className="flex items-center gap-2 rounded-md border border-success/20 bg-success/5 px-3 py-2">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <p className="text-xs text-muted-foreground">All imported rules have been reviewed.</p>
               </div>
             )}
 
