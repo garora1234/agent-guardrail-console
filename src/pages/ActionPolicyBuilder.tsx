@@ -28,12 +28,12 @@ const ActionPolicyBuilder = () => {
             <ActionConfigPanel action={selectedAction} />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <Shield className="h-10 w-10 text-muted-foreground mb-3" />
+             <Shield className="h-10 w-10 text-muted-foreground mb-3" />
               <h3 className="text-lg font-semibold text-foreground mb-1">
                 No Action Selected
               </h3>
               <p className="text-sm text-muted-foreground max-w-sm">
-                Start by selecting an action from the library to define its behavior, conditions, and approval policies.
+                Select an action to configure its policies, conditions, and approval flow.
               </p>
             </div>
           )}
