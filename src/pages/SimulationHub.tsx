@@ -30,7 +30,13 @@ interface RuleResult {
 interface SimulationResult {
   outcome: "allowed" | "requires-approval" | "blocked";
   summary: string;
+  reason: string;
+  policyName: string;
+  policySource: string;
   rules: RuleResult[];
+  role: string;
+  rolePermissions: string[];
+  roleExplanation: string;
   approvalFlow: string[];
 }
 
@@ -38,11 +44,22 @@ const mockResult: SimulationResult = {
   outcome: "requires-approval",
   summary:
     "Fee waiver request of $75 exceeds the allowed threshold of $50. Customer meets tenure and history requirements. Supervisor approval is required.",
+  reason:
+    "Amount exceeds allowed threshold and requires supervisor approval.",
+  policyName: "Waive Fee Policy",
+  policySource: "Fee_Waiver_Policy_2024.pdf",
   rules: [
     { text: "Amount < $50", passed: false },
     { text: "Customer tenure > 12 months", passed: true },
     { text: "No waiver in last 90 days", passed: true },
   ],
+  role: "CSR",
+  rolePermissions: [
+    "Can execute with approval",
+    "Cannot approve actions exceeding $50",
+  ],
+  roleExplanation:
+    "CSR cannot approve this action. Request is escalated to Supervisor.",
   approvalFlow: ["CSR", "Supervisor"],
 };
 
