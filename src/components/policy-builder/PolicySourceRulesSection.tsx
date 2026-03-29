@@ -133,9 +133,6 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
                         }`}>
                           {condition.text}
                         </code>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
-                          Imported
-                        </Badge>
                       </div>
                     </div>
                   ))}
