@@ -23,6 +23,8 @@ import {
   RotateCcw,
   Shield,
   Users,
+  MessageSquare,
+  Lightbulb,
 } from "lucide-react";
 
 interface RuleResult {
