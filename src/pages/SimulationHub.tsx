@@ -20,6 +20,8 @@ import {
   AlertTriangle,
   ArrowRight,
   RotateCcw,
+  Shield,
+  Users,
 } from "lucide-react";
 
 interface RuleResult {
@@ -30,7 +32,13 @@ interface RuleResult {
 interface SimulationResult {
   outcome: "allowed" | "requires-approval" | "blocked";
   summary: string;
+  reason: string;
+  policyName: string;
+  policySource: string;
   rules: RuleResult[];
+  role: string;
+  rolePermissions: string[];
+  roleExplanation: string;
   approvalFlow: string[];
 }
 
@@ -38,11 +46,22 @@ const mockResult: SimulationResult = {
   outcome: "requires-approval",
   summary:
     "Fee waiver request of $75 exceeds the allowed threshold of $50. Customer meets tenure and history requirements. Supervisor approval is required.",
+  reason:
+    "Amount exceeds allowed threshold and requires supervisor approval.",
+  policyName: "Waive Fee Policy",
+  policySource: "Fee_Waiver_Policy_2024.pdf",
   rules: [
     { text: "Amount < $50", passed: false },
     { text: "Customer tenure > 12 months", passed: true },
     { text: "No waiver in last 90 days", passed: true },
   ],
+  role: "CSR",
+  rolePermissions: [
+    "Can execute with approval",
+    "Cannot approve actions exceeding $50",
+  ],
+  roleExplanation:
+    "CSR cannot approve this action. Request is escalated to Supervisor.",
   approvalFlow: ["CSR", "Supervisor"],
 };
 
@@ -193,39 +212,83 @@ const SimulationHub = () => {
                   <p className="text-sm text-muted-foreground">
                     {result.summary}
                   </p>
+                  <p className="text-sm font-medium text-foreground mt-2">
+                    Reason: {result.reason}
+                  </p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Rules evaluated */}
+            {/* Policy Evaluation */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Rules Evaluated</CardTitle>
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" />
+                  Policy Evaluation
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                {result.rules.map((rule, i) => (
-                  <div
-                    key={i}
-                    className={`flex items-center gap-3 rounded-md border px-3 py-2 text-sm ${
-                      rule.passed
-                        ? "border-[hsl(var(--success))]/20 bg-[hsl(var(--success))]/5"
-                        : "border-destructive/20 bg-destructive/5"
-                    }`}
-                  >
-                    {rule.passed ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--success))]" />
-                    ) : (
-                      <XCircle className="h-4 w-4 shrink-0 text-destructive" />
-                    )}
-                    <span>{rule.text}</span>
-                    <Badge
-                      variant="outline"
-                      className="ml-auto text-[10px] px-1.5"
+              <CardContent className="space-y-3">
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Policy applied: </span>
+                  <span className="font-medium text-foreground">{result.policyName}</span>
+                  <span className="text-muted-foreground ml-2">({result.policySource})</span>
+                </div>
+                <div className="space-y-2">
+                  {result.rules.map((rule, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-3 rounded-md border px-3 py-2 text-sm ${
+                        rule.passed
+                          ? "border-[hsl(var(--success))]/20 bg-[hsl(var(--success))]/5"
+                          : "border-destructive/20 bg-destructive/5"
+                      }`}
                     >
-                      {rule.passed ? "Passed" : "Failed"}
-                    </Badge>
-                  </div>
-                ))}
+                      {rule.passed ? (
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--success))]" />
+                      ) : (
+                        <XCircle className="h-4 w-4 shrink-0 text-destructive" />
+                      )}
+                      <span>{rule.text}</span>
+                      <Badge
+                        variant="outline"
+                        className="ml-auto text-[10px] px-1.5"
+                      >
+                        {rule.passed ? "Passed" : "Failed"}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground pt-1">
+                  These rules are derived from approved policies in Action Policies.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Role Impact */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary" />
+                  Role Impact
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-sm">
+                  <span className="text-muted-foreground">Current role: </span>
+                  <Badge variant="outline" className="ml-1">{result.role}</Badge>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">Permissions</p>
+                  {result.rolePermissions.map((perm, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm text-foreground">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                      {perm}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground border-t border-border pt-3">
+                  {result.roleExplanation}
+                </p>
               </CardContent>
             </Card>
 
