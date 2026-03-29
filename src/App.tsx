@@ -20,7 +20,7 @@ const App = () => (
           <Route path="/" element={<BankConfigStudio />} />
           <Route path="/policies" element={<ActionPolicyBuilder />} />
           <Route path="/roles" element={<RoleConfiguration />} />
-          <Route path="/simulation" element={<SimulationHub />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
