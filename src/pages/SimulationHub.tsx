@@ -104,6 +104,7 @@ const outcomeStyles = {
 };
 
 const SimulationHub = () => {
+  const navigate = useNavigate();
   const [scenario, setScenario] = useState(
     "Customer requests fee waiver of $75 with 2-year tenure"
   );
