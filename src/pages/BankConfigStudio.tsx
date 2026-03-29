@@ -1,4 +1,6 @@
+import { useState } from "react";
 import AppLayout from "@/components/layout/AppLayout";
+import SetupStepper from "@/components/bank-config/SetupStepper";
 import DataSourcesSection from "@/components/bank-config/DataSourcesSection";
 import ProductCatalogSection from "@/components/bank-config/ProductCatalogSection";
 import WorkflowMappingSection from "@/components/bank-config/WorkflowMappingSection";
@@ -6,6 +8,12 @@ import PolicySourcesSection from "@/components/bank-config/PolicySourcesSection"
 import ApprovedPoliciesSection from "@/components/bank-config/ApprovedPoliciesSection";
 
 const BankConfigStudio = () => {
+  const [newlyApproved, setNewlyApproved] = useState(0);
+
+  const handlePolicyApproved = () => {
+    setNewlyApproved((prev) => prev + 1);
+  };
+
   return (
     <AppLayout>
       <div className="px-8 py-6 space-y-6 max-w-5xl">
@@ -16,11 +24,13 @@ const BankConfigStudio = () => {
           </p>
         </div>
 
+        <SetupStepper currentStep={2} />
+
         <DataSourcesSection />
         <ProductCatalogSection />
         <WorkflowMappingSection />
-        <PolicySourcesSection />
-        <ApprovedPoliciesSection />
+        <PolicySourcesSection onPolicyApproved={handlePolicyApproved} />
+        <ApprovedPoliciesSection newlyApproved={newlyApproved} />
       </div>
     </AppLayout>
   );
