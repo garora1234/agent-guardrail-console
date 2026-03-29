@@ -15,23 +15,11 @@ interface PolicySourceRulesSectionProps {
 }
 
 const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => {
-  const [reviewedIds, setReviewedIds] = useState<Record<string, "approved" | "rejected">>({});
+  const [ruleStatus, setRuleStatus] = useState<"pending" | "approved" | "rejected">("pending");
 
   const importedConditions = action.conditions.filter((c) => c.origin === "imported");
   const customConditions = action.conditions.filter((c) => c.origin === "custom");
   const isImported = action.source === "imported";
-
-  const handleApprove = (id: string) => {
-    setReviewedIds((prev) => ({ ...prev, [id]: "approved" }));
-  };
-
-  const handleReject = (id: string) => {
-    setReviewedIds((prev) => ({ ...prev, [id]: "rejected" }));
-  };
-
-  const pendingImported = importedConditions.filter((c) => !reviewedIds[c.id]);
-  const approvedImported = importedConditions.filter((c) => reviewedIds[c.id] === "approved");
-  const approvedCount = approvedImported.length;
 
   return (
     <Card className="border-primary/20 bg-primary/[0.02]">
@@ -90,72 +78,37 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
           </div>
         ) : (
           <div className="space-y-4 mb-4">
-            {/* Pending Imported Rules — need review */}
-            {pendingImported.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-2">
+            {/* Imported Rules block */}
+            {importedConditions.length > 0 && (
+              <div className="rounded-md border border-border bg-secondary/20 p-4 space-y-3">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <Import className="h-3 w-3 text-primary" />
                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Imported Rules — Pending Review
+                      {ruleStatus === "pending"
+                        ? "Imported Rules — Pending Review"
+                        : ruleStatus === "approved"
+                        ? "Imported Rules — Approved"
+                        : "Imported Rules — Rejected"}
                     </span>
                   </div>
-                  {approvedCount > 0 && (
+                  {ruleStatus === "approved" && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-success/30 text-success bg-success/10">
-                      {approvedCount} approved
+                      <CheckCircle2 className="h-3 w-3 mr-0.5" />
+                      Approved
                     </Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground mb-2">
-                  Review each extracted rule. Approve to operationalize, edit to refine, or reject to discard.
-                </p>
-                <div className="space-y-2">
-                  {pendingImported.map((condition, idx) => (
-                    <div key={condition.id} className="rounded-md border border-border bg-secondary/20 p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <code className="text-sm font-mono flex-1 text-foreground">
-                          {condition.text}
-                        </code>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
-                          Imported
-                        </Badge>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" className="gap-1.5 h-7 text-xs" onClick={() => handleApprove(condition.id)}>
-                          <CheckCircle2 className="h-3 w-3" />
-                          Approve
-                        </Button>
-                        <Button size="sm" variant="outline" className="gap-1.5 h-7 text-xs">
-                          <Pencil className="h-3 w-3" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="gap-1.5 h-7 text-xs text-muted-foreground hover:text-destructive"
-                          onClick={() => handleReject(condition.id)}
-                        >
-                          <X className="h-3 w-3" />
-                          Reject
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {/* Approved Imported Rules */}
-            {approvedImported.length > 0 && (
-              <div>
-                <div className="flex items-center gap-1.5 mb-2">
-                  <CheckCircle2 className="h-3 w-3 text-success" />
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Approved Rules
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {approvedImported.map((condition, idx) => (
+                {ruleStatus === "pending" && (
+                  <p className="text-xs text-muted-foreground">
+                    Review the extracted rules below. Approve to operationalize, edit to refine, or reject to discard.
+                  </p>
+                )}
+
+                {/* Conditions list */}
+                <div className={`space-y-1.5 ${ruleStatus === "rejected" ? "opacity-50" : ""}`}>
+                  {importedConditions.map((condition, idx) => (
                     <div key={condition.id}>
                       {idx > 0 && condition.logic && (
                         <div className="flex items-center gap-2 py-1">
@@ -165,26 +118,51 @@ const PolicySourceRulesSection = ({ action }: PolicySourceRulesSectionProps) => 
                           <Separator className="flex-1" />
                         </div>
                       )}
-                      <div className="flex items-center gap-3 rounded-md border border-success/20 bg-success/5 px-3 py-2">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
-                        <code className="text-sm font-mono flex-1 text-foreground">
+                      <div className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
+                        ruleStatus === "approved"
+                          ? "border-success/20 bg-success/5"
+                          : ruleStatus === "rejected"
+                          ? "border-border bg-muted/30 line-through"
+                          : "border-border bg-background/50"
+                      }`}>
+                        {ruleStatus === "approved" && (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
+                        )}
+                        <code className={`text-sm font-mono flex-1 ${
+                          ruleStatus === "rejected" ? "text-muted-foreground" : "text-foreground"
+                        }`}>
                           {condition.text}
                         </code>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-success/30 text-success bg-success/5 shrink-0">
-                          Approved
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
+                          Imported
                         </Badge>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
 
-            {/* All reviewed message */}
-            {pendingImported.length === 0 && importedConditions.length > 0 && (
-              <div className="flex items-center gap-2 rounded-md border border-success/20 bg-success/5 px-3 py-2">
-                <CheckCircle2 className="h-4 w-4 text-success" />
-                <p className="text-xs text-muted-foreground">All imported rules have been reviewed.</p>
+                {/* Action buttons at rule level */}
+                {ruleStatus === "pending" && (
+                  <div className="flex gap-2 pt-1">
+                    <Button size="sm" className="gap-1.5 h-8 text-xs" onClick={() => setRuleStatus("approved")}>
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      Approve
+                    </Button>
+                    <Button size="sm" variant="outline" className="gap-1.5 h-8 text-xs">
+                      <Pencil className="h-3.5 w-3.5" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="gap-1.5 h-8 text-xs text-muted-foreground hover:text-destructive"
+                      onClick={() => setRuleStatus("rejected")}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Reject
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
 
