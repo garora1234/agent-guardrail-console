@@ -1,20 +1,21 @@
 import { Database, Settings, Shield, Activity, FlaskConical, Users, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
-  { icon: Settings, label: "Bank Configuration", path: "/", active: true },
-  { icon: Shield, label: "Action Policies", path: "/policies", active: false },
-  { icon: Users, label: "Role Configuration", path: "/roles", active: false },
-  { icon: Database, label: "Agents", path: "/agents", active: false },
-  { icon: FlaskConical, label: "Simulation", path: "/simulation", active: false },
-  { icon: FileText, label: "Audit Log", path: "/audit", active: false },
-  { icon: Activity, label: "Monitoring", path: "/monitoring", active: false },
+  { icon: Settings, label: "Bank Configuration", path: "/" },
+  { icon: Shield, label: "Action Policies", path: "/policies" },
+  { icon: Users, label: "Role Configuration", path: "/roles" },
+  { icon: Database, label: "Agents", path: "/agents" },
+  { icon: FlaskConical, label: "Simulation", path: "/simulation" },
+  { icon: FileText, label: "Audit Log", path: "/audit" },
+  { icon: Activity, label: "Monitoring", path: "/monitoring" },
 ];
-
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-
+  const location = useLocation();
+  const navigate = useNavigate();
   return (
     <aside
       className={cn(
@@ -35,12 +36,15 @@ const AppSidebar = () => {
       </div>
 
       <nav className="flex-1 space-y-1 px-2 py-4">
-        {navItems.map((item) => (
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
           <button
             key={item.label}
+            onClick={() => navigate(item.path)}
             className={cn(
               "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-              item.active
+              isActive
                 ? "bg-accent text-foreground"
                 : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             )}
@@ -49,7 +53,8 @@ const AppSidebar = () => {
             <item.icon className="h-4 w-4 shrink-0" />
             {!collapsed && <span className="truncate">{item.label}</span>}
           </button>
-        ))}
+          );
+        })}
       </nav>
 
       <button
