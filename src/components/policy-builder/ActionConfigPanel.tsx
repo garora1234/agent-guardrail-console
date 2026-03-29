@@ -1,17 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import {
-  ListChecks, ShieldAlert, Zap, GitBranch, ShieldCheck, FileText,
-  Save, Rocket, FlaskConical, Plus, Trash2, ArrowRight, ExternalLink,
-  AlertTriangle, Info, Import, PenLine,
+  ShieldAlert, Zap, GitBranch, ShieldCheck,
+  Save, Rocket, FlaskConical, Plus, ArrowRight,
+  AlertTriangle,
 } from "lucide-react";
 import type { ActionPolicy, RiskLevel, AutonomyLevel } from "@/data/action-policies";
-import PolicyContextSection from "./PolicyContextSection";
+import PolicySourceRulesSection from "./PolicySourceRulesSection";
 
 interface ActionConfigPanelProps {
   action: ActionPolicy;
@@ -30,146 +28,25 @@ const autonomyLabels: Record<AutonomyLevel, { label: string; description: string
 };
 
 const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
-  const importedConditions = action.conditions.filter((c) => c.origin === "imported");
-  const customConditions = action.conditions.filter((c) => c.origin === "custom");
-
   return (
     <div className="space-y-5 pb-8">
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <h2 className="text-xl font-semibold text-foreground">{action.name}</h2>
+          <h2 className="text-xl font-semibold text-foreground">Policy Configuration</h2>
           <Badge variant="outline" className={riskLabels[action.riskLevel].className}>
             {riskLabels[action.riskLevel].label}
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">{action.description}</p>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{action.name}</span> — {action.description}
+        </p>
       </div>
 
-      {/* Policy Context */}
-      <PolicyContextSection action={action} />
+      {/* Unified: Policy Source & Rules */}
+      <PolicySourceRulesSection action={action} />
 
-      {/* Section 1: Policy Rules */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ListChecks className="h-4 w-4 text-primary" />
-              <CardTitle className="text-base">Policy Rules (Conditions)</CardTitle>
-            </div>
-            <Button variant="outline" size="sm" className="gap-1 text-xs h-7">
-              <Plus className="h-3 w-3" /> Add Custom Rule
-            </Button>
-          </div>
-          <CardDescription className="text-xs">
-            These rules were derived from approved bank policies and can be refined for execution.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {action.conditions.length === 0 ? (
-            <div className="flex flex-col items-center py-6 text-center">
-              <ListChecks className="h-6 w-6 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">No conditions defined yet.</p>
-              <p className="text-xs text-muted-foreground">Import policies from Configuration Studio or add custom rules.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Imported Rules */}
-              {importedConditions.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Import className="h-3 w-3 text-primary" />
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Imported Rules
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    {importedConditions.map((condition, idx) => (
-                      <div key={condition.id}>
-                        {idx > 0 && condition.logic && (
-                          <div className="flex items-center gap-2 py-1">
-                            <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 h-5">
-                              {condition.logic}
-                            </Badge>
-                            <Separator className="flex-1" />
-                          </div>
-                        )}
-                        <div className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
-                          condition.enabled === false
-                            ? "border-border bg-muted/30 opacity-60"
-                            : "border-border bg-accent/30"
-                        }`}>
-                          <Checkbox
-                            checked={condition.enabled !== false}
-                            className="shrink-0"
-                          />
-                          <code className={`text-sm font-mono flex-1 ${
-                            condition.enabled === false ? "line-through text-muted-foreground" : "text-foreground"
-                          }`}>
-                            {condition.text}
-                          </code>
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-primary/20 text-primary bg-primary/5 shrink-0">
-                            Imported
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Custom Rules */}
-              {customConditions.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <PenLine className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Custom Rules
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    {customConditions.map((condition) => (
-                      <div key={condition.id}>
-                        {condition.logic && (
-                          <div className="flex items-center gap-2 py-1">
-                            <Badge variant="secondary" className="text-[10px] font-mono px-2 py-0 h-5">
-                              {condition.logic}
-                            </Badge>
-                            <Separator className="flex-1" />
-                          </div>
-                        )}
-                        <div className={`flex items-center gap-3 rounded-md border px-3 py-2 ${
-                          condition.enabled === false
-                            ? "border-dashed border-border bg-muted/30 opacity-60"
-                            : "border-dashed border-muted-foreground/30 bg-background"
-                        }`}>
-                          <Checkbox
-                            checked={condition.enabled !== false}
-                            className="shrink-0"
-                          />
-                          <code className={`text-sm font-mono flex-1 ${
-                            condition.enabled === false ? "line-through text-muted-foreground" : "text-foreground"
-                          }`}>
-                            {condition.text}
-                          </code>
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-muted-foreground/20 text-muted-foreground shrink-0">
-                            Custom
-                          </Badge>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive shrink-0">
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Section 2: Risk Classification */}
+      {/* Risk Classification */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
@@ -197,7 +74,7 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
         </CardContent>
       </Card>
 
-      {/* Section 3: Autonomy Level */}
+      {/* Autonomy Level */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
@@ -230,7 +107,7 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
         </CardContent>
       </Card>
 
-      {/* Section 4: Approval Flow */}
+      {/* Approval Flow */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -275,7 +152,7 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
         </CardContent>
       </Card>
 
-      {/* Section 5: Guardrails */}
+      {/* Guardrails */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -313,38 +190,7 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
         </CardContent>
       </Card>
 
-      {/* Section 6: Policy Source & Traceability */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-primary" />
-            <CardTitle className="text-base">Policy Source & Traceability</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="text-xs">
-              {action.source === "imported" ? "Imported from Document" : "Manually Created"}
-            </Badge>
-            {action.sourceDocument && (
-              <button className="flex items-center gap-1 text-xs text-primary hover:underline">
-                <ExternalLink className="h-3 w-3" />
-                {action.sourceDocument}
-              </button>
-            )}
-          </div>
-          {action.source === "imported" && (
-            <div className="flex items-start gap-2 mt-3 rounded-md bg-info/5 border border-info/20 px-3 py-2">
-              <Info className="h-3.5 w-3.5 text-info shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-foreground">
-                This policy was extracted from an uploaded document during Bank Configuration. All conditions and guardrails were reviewed and approved before being applied.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Section 7: Actions */}
+      {/* Actions */}
       <div className="flex items-center gap-3 pt-2">
         <Button variant="outline" className="gap-1.5">
           <Save className="h-3.5 w-3.5" />
