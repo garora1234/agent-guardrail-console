@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,8 @@ import {
   RotateCcw,
   Shield,
   Users,
+  MessageSquare,
+  Lightbulb,
 } from "lucide-react";
 
 interface RuleResult {
@@ -40,7 +43,11 @@ interface SimulationResult {
   rolePermissions: string[];
   roleExplanation: string;
   approvalFlow: string[];
+  decisionExplanation: string;
+  systemInsight: string;
 }
+
+
 
 const mockResult: SimulationResult = {
   outcome: "requires-approval",
@@ -63,6 +70,10 @@ const mockResult: SimulationResult = {
   roleExplanation:
     "CSR cannot approve this action. Request is escalated to Supervisor.",
   approvalFlow: ["CSR", "Supervisor"],
+  decisionExplanation:
+    "The fee waiver request was not automatically approved because the requested amount of $75 exceeds the allowed threshold of $50. However, since the customer meets tenure requirements (2 years > 12 months) and has no recent waivers, the request can proceed with supervisor approval.",
+  systemInsight:
+    "This scenario requires approval due to policy thresholds. Frequent escalations for this action may indicate overly strict policy settings — consider reviewing the threshold in Action Policies.",
 };
 
 const actions = [
@@ -93,6 +104,7 @@ const outcomeStyles = {
 };
 
 const SimulationHub = () => {
+  const navigate = useNavigate();
   const [scenario, setScenario] = useState(
     "Customer requests fee waiver of $75 with 2-year tenure"
   );
@@ -315,14 +327,36 @@ const SimulationHub = () => {
               </Card>
             )}
 
-            {/* Reset */}
-            <div className="pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2"
-                onClick={handleReset}
-              >
+            {/* Decision Explanation */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4 text-primary" />
+                  Decision Explanation
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-foreground leading-relaxed">
+                  {result.decisionExplanation}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* System Insight */}
+            <div className="flex items-start gap-3 rounded-md border border-[hsl(var(--info))]/20 bg-[hsl(var(--info))]/5 px-4 py-3">
+              <Lightbulb className="h-4 w-4 shrink-0 text-[hsl(var(--info))] mt-0.5" />
+              <p className="text-sm text-muted-foreground">{result.systemInsight}</p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-3 pt-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/policies")}>
+                <Shield className="h-4 w-4" /> Edit Policy
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/roles")}>
+                <Users className="h-4 w-4" /> Adjust Role Permissions
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2" onClick={handleReset}>
                 <RotateCcw className="h-4 w-4" /> Run Another Simulation
               </Button>
             </div>
