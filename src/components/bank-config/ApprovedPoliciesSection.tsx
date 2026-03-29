@@ -1,4 +1,4 @@
-import { ShieldCheck, ArrowRight } from "lucide-react";
+import { ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,14 +9,19 @@ interface ApprovedPolicy {
   action: string;
   conditions: string;
   approvedAt: string;
+  isNew?: boolean;
 }
 
-const approvedPolicies: ApprovedPolicy[] = [
+interface ApprovedPoliciesSectionProps {
+  newlyApproved?: number;
+}
+
+const baseApprovedPolicies: ApprovedPolicy[] = [
   { id: "1", action: "Waive Fee", conditions: "Amount < $50 · Tenure > 1yr · No waiver in 90d", approvedAt: "Mar 22, 2026" },
   { id: "2", action: "Close Account", conditions: "Balance = $0 · No pending txns · Customer-initiated", approvedAt: "Mar 22, 2026" },
 ];
 
-const ApprovedPoliciesSection = () => {
+const ApprovedPoliciesSection = ({ newlyApproved = 0 }: ApprovedPoliciesSectionProps) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -24,6 +29,12 @@ const ApprovedPoliciesSection = () => {
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
             <CardTitle className="text-lg">Approved Policies</CardTitle>
+            {newlyApproved > 0 && (
+              <Badge variant="outline" className="text-success border-success/30 bg-success/10 gap-1">
+                <CheckCircle2 className="h-3 w-3" />
+                {newlyApproved} newly approved
+              </Badge>
+            )}
           </div>
           <CardDescription className="mt-1">
             These policies will be passed into the Action Policy Builder for enforcement.
@@ -35,7 +46,7 @@ const ApprovedPoliciesSection = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        {approvedPolicies.length === 0 ? (
+        {baseApprovedPolicies.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <ShieldCheck className="h-8 w-8 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">No approved policies yet.</p>
@@ -51,7 +62,7 @@ const ApprovedPoliciesSection = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {approvedPolicies.map((policy) => (
+              {baseApprovedPolicies.map((policy) => (
                 <TableRow key={policy.id}>
                   <TableCell>
                     <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 font-medium">
