@@ -7,8 +7,8 @@ const navItems = [
   { icon: Settings, label: "Bank Configuration", path: "/" },
   { icon: Shield, label: "Action Policies", path: "/policies" },
   { icon: Users, label: "Role Configuration", path: "/roles" },
-  { icon: FlaskConical, label: "Simulation", path: "/simulation" },
-  { icon: FileText, label: "Audit Log", path: "/audit" },
+  { icon: FlaskConical, label: "Test & Simulation", path: "/simulation" },
+  { icon: FileText, label: "Audit Trail", path: "/audit" },
   { icon: Activity, label: "Monitoring", path: "/monitoring" },
 ];
 const AppSidebar = () => {
