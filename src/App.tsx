@@ -7,6 +7,7 @@ import BankConfigStudio from "./pages/BankConfigStudio";
 import ActionPolicyBuilder from "./pages/ActionPolicyBuilder";
 import RoleConfiguration from "./pages/RoleConfiguration";
 import SimulationHub from "./pages/SimulationHub";
+import AuditLog from "./pages/AuditLog";
 import NotFound from "./pages/NotFound.tsx";
 const queryClient = new QueryClient();
 
