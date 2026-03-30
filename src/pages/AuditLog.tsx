@@ -108,7 +108,7 @@ const AuditLog = () => {
                 </div>
                 <div>
                   <span className="text-muted-foreground">User: </span>
-                  <span className="font-medium">{selectedEvent.userRole} — {selectedEvent.user}</span>
+                  <span className="font-medium">{formatUser(selectedEvent)}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Timestamp: </span>
