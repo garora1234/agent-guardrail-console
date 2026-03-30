@@ -412,7 +412,7 @@ const AuditLog = () => {
                       </TableCell>
                       <TableCell className="font-medium text-sm">{event.actionType}</TableCell>
                       <TableCell className="text-sm">
-                        <span className="text-muted-foreground">{event.userRole}</span> — {event.user}
+                        {formatUser(event)}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={outcomeBadge[event.outcome].class + " text-[11px]"}>
