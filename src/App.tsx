@@ -22,6 +22,7 @@ const App = () => (
           <Route path="/policies" element={<ActionPolicyBuilder />} />
           <Route path="/roles" element={<RoleConfiguration />} />
           <Route path="/simulation" element={<SimulationHub />} />
+          <Route path="/audit" element={<AuditLog />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
