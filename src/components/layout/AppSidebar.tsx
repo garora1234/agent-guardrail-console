@@ -1,9 +1,10 @@
-import { Settings, Shield, Activity, FlaskConical, Users, FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { Settings, Shield, Activity, FlaskConical, Users, FileText, LayoutDashboard, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Settings, label: "Bank Configuration", path: "/" },
   { icon: Shield, label: "Action Policies", path: "/policies" },
   { icon: Users, label: "Role Configuration", path: "/roles" },
