@@ -33,7 +33,7 @@ const ActionConfigPanel = ({ action }: ActionConfigPanelProps) => {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <h2 className="text-xl font-semibold text-foreground">Policy Configuration</h2>
+          <h2 className="text-xl font-semibold text-foreground">Agent Behavior & Action Policy Builder</h2>
           <Badge variant="outline" className={riskLabels[action.riskLevel].className}>
             {riskLabels[action.riskLevel].label}
           </Badge>
