@@ -37,6 +37,13 @@ import {
 } from "lucide-react";
 import { mockAuditEvents, AuditEvent } from "@/data/audit-logs";
 
+const formatUser = (event: AuditEvent) => {
+  if (event.executionMode === "Auto-Execute") {
+    return `Executed by Agent (on behalf of ${event.userRole} — ${event.user})`;
+  }
+  return `${event.userRole} — ${event.user}`;
+};
+
 const outcomeBadge = {
   allowed: { label: "Allowed", class: "bg-[hsl(var(--success))]/10 text-[hsl(var(--success))] border-[hsl(var(--success))]/30" },
   "requires-approval": { label: "Approval Required", class: "bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))] border-[hsl(var(--warning))]/30" },
@@ -101,7 +108,7 @@ const AuditLog = () => {
                 </div>
                 <div>
                   <span className="text-muted-foreground">User: </span>
-                  <span className="font-medium">{selectedEvent.userRole} — {selectedEvent.user}</span>
+                  <span className="font-medium">{formatUser(selectedEvent)}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Timestamp: </span>
@@ -405,7 +412,7 @@ const AuditLog = () => {
                       </TableCell>
                       <TableCell className="font-medium text-sm">{event.actionType}</TableCell>
                       <TableCell className="text-sm">
-                        <span className="text-muted-foreground">{event.userRole}</span> — {event.user}
+                        {formatUser(event)}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={outcomeBadge[event.outcome].class + " text-[11px]"}>
