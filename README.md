@@ -1,10 +1,10 @@
-# AgentEdge Control Center
+# BankAgentGuard
 
 A configurable control system for governing how AI agents operate within core banking environments.
 
 ## Overview
 
-AgentEdge Control Center is designed to enable banks to safely deploy AI agents within their existing systems. Each bank has its own products, workflows, and compliance requirements — making it critical that AI behavior is configurable, constrained, and auditable.
+BankAgentGuard is designed to enable banks to safely deploy AI agents within their existing systems. Each bank has its own products, workflows, and compliance requirements — making it critical that AI behavior is configurable, constrained, and auditable.
 
 Rather than treating agents as autonomous entities, this system treats them as **controlled execution layers** operating within explicitly defined policies and permissions.
 
