@@ -1,34 +1,101 @@
 # AgentEdge Control Center
 
-AI-powered configuration and governance platform for banks to define, control, and audit how AI agents operate within core banking environments.
+A configurable control system for governing how AI agents operate within core banking environments.
 
 ## Overview
 
-AgentEdge provides a centralized control system where bank administrators, compliance officers, and implementation teams can configure agent behavior, define action policies, and monitor AI-driven operations — all within a secure, auditable framework.
+AgentEdge Control Center is designed to enable banks to safely deploy AI agents within their existing systems. Each bank has its own products, workflows, and compliance requirements — making it critical that AI behavior is configurable, constrained, and auditable.
 
-## Key Features
+Rather than treating agents as autonomous entities, this system treats them as **controlled execution layers** operating within explicitly defined policies and permissions.
 
-- **Bank Configuration Studio** — Set up data sources, product catalogs, workflows, and ingest policy documents
-- **Action Policy Builder** — Define what actions AI agents can take, under what conditions, with approval flows and guardrails
-- **Role Configuration** — Control autonomy levels, permissions, and approval authority per role (CSR, Supervisor, Admin)
-- **Test & Simulation** — Simulate agent behavior against real scenarios before deployment
-- **Audit Trail** — Full traceability of every agent decision with rule evaluation, approval chains, and explainability
-- **Monitoring** — High-level system health, agent activity, and risk signal overview
+This project is based on a time-boxed product design exercise. All content reflects my own thinking and does not include any proprietary or confidential information.
+
+---
+
+## Problem
+
+Banks need AI agents that can:
+
+* Operate within their specific implementation of core banking systems
+* Follow institution-specific policies and compliance rules
+* Provide full traceability for every action taken
+
+The challenge is building a system that is:
+
+* Configurable across different banks
+* Safe for action-taking (not just read-only)
+* Auditable for compliance and regulatory needs
+
+---
+
+## Approach
+
+I approached this as designing a **control system for AI behavior**, not a traditional settings UI.
+
+The system is structured around five core layers:
+
+* **Bank Configuration** — Define the bank’s environment (data sources, products, workflows, policy ingestion)
+* **Decisioning Rules** — Convert policies into structured rules that govern agent behavior
+* **Role Configuration** — Define who can do what, including autonomy limits and approval authority
+* **Simulation** — Test agent behavior before deployment
+* **Audit Log** — Provide full traceability and explainability of every action
+
+At runtime, agent behavior is determined by:
+
+> **Policy constraints ∩ Role permissions**
+
+---
+
+## Key Capabilities
+
+* **Bank Configuration Studio**
+  Map data sources, products, workflows, and ingest policy documents to align the system with each bank’s environment
+
+* **Decisioning Rules**
+  Define and refine rules governing actions (e.g., fee waivers, address changes), including conditions, approvals, and guardrails
+
+* **Role Configuration**
+  Control permissions, autonomy levels, and approval authority across roles such as CSR, Supervisor, and Admin
+
+* **Simulation**
+  Test real scenarios to understand how policies and roles interact before deployment
+
+* **Audit Log**
+  Reconstruct every action with full context: inputs, rules applied, approvals, and outcomes
+
+* **Monitoring**
+  Provide system-level visibility into activity, risk signals, and operational health
+
+---
 
 ## Target Users
 
-| Role | Responsibility |
-|------|---------------|
-| Bank Admins / Operations | Configure agent behavior and policies |
-| Compliance Officers / Supervisors | Monitor, audit, and review agent actions |
-| FIS Implementation Teams | Set up and manage configurations for smaller banks |
+| Role                     | Responsibility                                    |
+| ------------------------ | ------------------------------------------------- |
+| Bank Admins / Operations | Configure policies, workflows, and agent behavior |
+| Compliance & Risk Teams  | Audit decisions and ensure regulatory adherence   |
+| Implementation Teams     | Deploy and manage configurations across banks     |
+
+---
+
+## Design Principles
+
+* Treat agents as **controlled systems**, not autonomous actors
+* Enforce behavior through **explicit policies and permissions**
+* Support **progressive autonomy** (suggest → approve → execute)
+* Ensure all actions are **traceable, explainable, and reconstructable**
+* Prioritize **clarity, safety, and auditability** over flexibility
+
+---
 
 ## Tech Stack
 
-- **Frontend:** React 18, TypeScript, Vite, Tailwind CSS
-- **UI Components:** shadcn/ui
-- **State Management:** TanStack React Query
-- **Routing:** React Router
+* **Frontend:** React 18, TypeScript, Vite, Tailwind CSS
+* **UI Components:** shadcn/ui
+* **State Management:** TanStack React Query
+* **Routing:** React Router
+
+---
 
 ## Getting Started
 
@@ -36,10 +103,3 @@ AgentEdge provides a centralized control system where bank administrators, compl
 npm install
 npm run dev
 ```
-
-## Design Principles
-
-- Control system for AI behavior — not a chatbot interface
-- Agents operate within a defined policy sandbox, not open-ended autonomy
-- All agent actions must be traceable, explainable, and reconstructable
-- Enterprise-focused: clarity, trust, safety, and visibility
